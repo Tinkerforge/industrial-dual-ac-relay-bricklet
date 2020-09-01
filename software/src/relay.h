@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "bricklib2/utility/led_flicker.h"
+
 #define RELAY_NUM 2
 
 typedef struct {
@@ -32,12 +34,17 @@ typedef struct {
 	bool monoflop_running[RELAY_NUM];
 	uint32_t monoflop_time[RELAY_NUM];
 	uint32_t monoflop_start[RELAY_NUM];
+
+	uint8_t channel_led_config[RELAY_NUM];
+	LEDFlickerState channel_led_flicker_state[RELAY_NUM];
 } Relay;
+
+extern Relay relay;
 
 bool relay_get_value(const uint8_t channel);
 void relay_set_value(const uint8_t channel, const bool value);
 
-void relay_tick(Relay *relay);
-void relay_init(Relay *relay);
+void relay_tick(void);
+void relay_init(void);
 
 #endif

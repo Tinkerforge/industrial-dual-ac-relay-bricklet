@@ -29,15 +29,13 @@
 #include "communication.h"
 #include "relay.h"
 
-Relay relay;
-
 int main(void) {
-	relay_init(&relay);
+	relay_init();
 	communication_init();
 
 	while(true) {
 		bootloader_tick();
 		communication_tick();
-		relay_tick(&relay);
+		relay_tick();
 	}
 }

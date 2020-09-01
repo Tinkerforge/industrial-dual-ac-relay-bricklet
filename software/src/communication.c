@@ -26,12 +26,12 @@
 #include "bricklib2/hal/system_timer/system_timer.h"
 #include "bricklib2/protocols/tfp/tfp.h"
 
-extern Relay relay;
-
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
 		case FID_SET_VALUE: return set_value(message);
 		case FID_GET_VALUE: return get_value(message, response);
+		case FID_SET_CHANNEL_LED_CONFIG: return set_channel_led_config(message);
+		case FID_GET_CHANNEL_LED_CONFIG: return get_channel_led_config(message, response);
 		case FID_SET_MONOFLOP: return set_monoflop(message);
 		case FID_GET_MONOFLOP: return get_monoflop(message, response);
 		case FID_SET_SELECTED_VALUE: return set_selected_value(message);
@@ -53,6 +53,27 @@ BootloaderHandleMessageResponse get_value(const GetValue *data, GetValue_Respons
 	response->header.length = sizeof(GetValue_Response);
 	response->channel0      = relay_get_value(0);
 	response->channel1      = relay_get_value(1);
+
+	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
+}
+
+BootloaderHandleMessageResponse set_channel_led_config(const SetChannelLEDConfig *data) {
+	if(data->channel > 1) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	relay.channel_led_config[data->channel] = data->config;
+
+	return HANDLE_MESSAGE_RESPONSE_EMPTY;
+}
+
+BootloaderHandleMessageResponse get_channel_led_config(const GetChannelLEDConfig *data, GetChannelLEDConfig_Response *response) {
+	if(data->channel > 1) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	response->header.length = sizeof(GetChannelLEDConfig_Response);
+	response->config        = relay.channel_led_config[data->channel];
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }

@@ -35,15 +35,39 @@ void communication_init(void);
 
 // Constants
 
+#define INDUSTRIAL_DUAL_AC_RELAY_CHANNEL_LED_CONFIG_OFF 0
+#define INDUSTRIAL_DUAL_AC_RELAY_CHANNEL_LED_CONFIG_ON 1
+#define INDUSTRIAL_DUAL_AC_RELAY_CHANNEL_LED_CONFIG_SHOW_HEARTBEAT 2
+#define INDUSTRIAL_DUAL_AC_RELAY_CHANNEL_LED_CONFIG_SHOW_CHANNEL_STATUS 3
+
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_MODE_BOOTLOADER 0
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_MODE_FIRMWARE 1
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT 2
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_MODE_FIRMWARE_WAIT_FOR_REBOOT 3
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_MODE_FIRMWARE_WAIT_FOR_ERASE_AND_REBOOT 4
+
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_STATUS_OK 0
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_STATUS_INVALID_MODE 1
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_STATUS_NO_CHANGE 2
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_STATUS_ENTRY_FUNCTION_NOT_PRESENT 3
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_STATUS_DEVICE_IDENTIFIER_INCORRECT 4
+#define INDUSTRIAL_DUAL_AC_RELAY_BOOTLOADER_STATUS_CRC_MISMATCH 5
+
+#define INDUSTRIAL_DUAL_AC_RELAY_STATUS_LED_CONFIG_OFF 0
+#define INDUSTRIAL_DUAL_AC_RELAY_STATUS_LED_CONFIG_ON 1
+#define INDUSTRIAL_DUAL_AC_RELAY_STATUS_LED_CONFIG_SHOW_HEARTBEAT 2
+#define INDUSTRIAL_DUAL_AC_RELAY_STATUS_LED_CONFIG_SHOW_STATUS 3
 
 // Function and callback IDs and structs
 #define FID_SET_VALUE 1
 #define FID_GET_VALUE 2
-#define FID_SET_MONOFLOP 3
-#define FID_GET_MONOFLOP 4
-#define FID_SET_SELECTED_VALUE 6
+#define FID_SET_CHANNEL_LED_CONFIG 3
+#define FID_GET_CHANNEL_LED_CONFIG 4
+#define FID_SET_MONOFLOP 5
+#define FID_GET_MONOFLOP 6
+#define FID_SET_SELECTED_VALUE 8
 
-#define FID_CALLBACK_MONOFLOP_DONE 5
+#define FID_CALLBACK_MONOFLOP_DONE 7
 
 typedef struct {
 	TFPMessageHeader header;
@@ -60,6 +84,22 @@ typedef struct {
 	bool channel0;
 	bool channel1;
 } __attribute__((__packed__)) GetValue_Response;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t channel;
+	uint8_t config;
+} __attribute__((__packed__)) SetChannelLEDConfig;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t channel;
+} __attribute__((__packed__)) GetChannelLEDConfig;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t config;
+} __attribute__((__packed__)) GetChannelLEDConfig_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -96,6 +136,8 @@ typedef struct {
 // Function prototypes
 BootloaderHandleMessageResponse set_value(const SetValue *data);
 BootloaderHandleMessageResponse get_value(const GetValue *data, GetValue_Response *response);
+BootloaderHandleMessageResponse set_channel_led_config(const SetChannelLEDConfig *data);
+BootloaderHandleMessageResponse get_channel_led_config(const GetChannelLEDConfig *data, GetChannelLEDConfig_Response *response);
 BootloaderHandleMessageResponse set_monoflop(const SetMonoflop *data);
 BootloaderHandleMessageResponse get_monoflop(const GetMonoflop *data, GetMonoflop_Response *response);
 BootloaderHandleMessageResponse set_selected_value(const SetSelectedValue *data);
