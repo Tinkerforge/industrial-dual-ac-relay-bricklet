@@ -1,0 +1,15 @@
+# Change XYZ to the UID of your Industrial Dual AC Relay Bricklet
+
+setup:
+	# Turn relays alternating on/off 10 times with 1 second delay
+	for i in 0..4
+
+		wait for 1s
+
+		publish '{"channel0": true, "channel1": false}' to tinkerforge/request/industrial_dual_ac_relay_bricklet/XYZ/set_value
+
+		wait for 1s
+
+		publish '{"channel0": false, "channel1": true}' to tinkerforge/request/industrial_dual_ac_relay_bricklet/XYZ/set_value
+
+	endfor
